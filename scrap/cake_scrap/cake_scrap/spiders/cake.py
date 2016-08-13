@@ -60,6 +60,7 @@ class cake(CrawlSpider):
         item['article_content'] = self.sanitize_output(content['articleBody'])
         item['article_title'] = content['headline']
         item['article_thumbnail_url'] = content['image']['@list']
+        item['author_name'] = content['author']['name']
 
         item['article_url'] = response.url
 
