@@ -1,0 +1,24 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./db/pgdata:/var/lib/postgresql/data"
+  web:
+    build: ./web
+    # Avoiding race condition like a boss (or not)
+    command: bash -c "sleep 5 && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - "./web/cake_api:/code"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  scrap:
+    build: ./scrap
+    volumes:
+      - "./scrap/cake_scrap:/code"
+    depends_on:
+      - db
