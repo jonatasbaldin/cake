@@ -98,12 +98,11 @@
     service: name=docker state=started enabled=yes
     tags: service, docker_service
 
-  - name: Reset SSH connections (new session, where user is in docker group)
-    service: name=ssh state=restarted enabled=yes
-    tags: service, ssh_service
-
+  # All docker-compose runs with sg
+  # The ubuntu user needs to log out and in again to be part of docker group
+  # And Ansible does not do that
   - name: Run docker-compose commands
-    command: "{{ item }}"
+    command: "sg docker -c \"{{ item }}\""
     with_items:
       - docker-compose -f docker-compose-production.yml build
       - docker-compose -f docker-compose-production.yml up -d
@@ -117,7 +116,7 @@
     tags: compose
 
   - name: Run django migrate
-    command: "{{ item }} "
+    command: "sg docker -c \"{{ item }}\""
     with_items:
       - docker-compose -f docker-compose-production.yml run --rm web python manage.py makemigrations
       - docker-compose -f docker-compose-production.yml run --rm web python manage.py migrate
@@ -127,7 +126,7 @@
     tags: migrate
 
   - name: Run first crawl
-    command: docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000
+    command: "sg docker -c \"docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000\""
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
@@ -135,5 +134,5 @@
 
   - name: Install crawler cron job
     cron: name='They see me crawlin, they hatin' user={{ user }} minute="*/15" hour="*" 
-          job='docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=100' 
+          job='cd /home/ubuntu/cake && docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=100' 
     tags: cron
