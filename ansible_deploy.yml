@@ -134,5 +134,5 @@
 
   - name: Install crawler cron job
     cron: name='They see me crawlin, they hatin' user={{ user }} minute="*/15" hour="*" 
-          job='cd /home/ubuntu/cake && docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=100' 
+          job='cd /home/ubuntu/cake && /usr/local/bin/docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=100' 
     tags: cron
