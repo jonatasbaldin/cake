@@ -117,8 +117,24 @@
     service: name=docker state=started enabled=yes
     tags: service, docker_service
 
+  - name: Change Jenkins user
+    lineinfile: dest=/etc/default/jenkins regexp=^JENKINS_USER line=JENKINS_USER={{ user }}
+    tags: jenkins
+
+  - name: Change Jenkins group
+    lineinfile: dest=/etc/default/jenkins regexp=^JENKINS_GROUP line=JENKINS_GROUP={{ user }}
+    tags: jenkins
+
+  - name: Change Jenkins folder permissions
+    file: dest={{ item }} owner={{ user }} group={{ user }} recurse=yes
+    with_items:
+      - /var/lib/jenkins 
+      - /var/cache/jenkins
+      - /var/log/jenkins
+    tags: jenkins
+
   - name: Start jenkins
-    service: name=jenkins state=started enabled=yes
+    service: name=jenkins state=restarted enabled=yes
     tags: service, jenkins_service
 
   # All docker-compose runs with sg
