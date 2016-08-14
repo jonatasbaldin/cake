@@ -14,7 +14,7 @@ class CakeScrapPipeline(object):
         """ Initial database connection
         """
         self.connection = psycopg2.connect(host='db', database='postgres',
-                                           user='postgres', password='')
+                                           user='postgres', password='I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3')
         self.cursor = self.connection.cursor()
 
     def verify_author(self, author_name):
