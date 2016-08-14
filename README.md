@@ -1,5 +1,7 @@
 ![Cheesecake](img/logo.png)
 
+[![Build Status](http://cake.deployeveryday.com:8080/buildStatus/icon?job=cake)](http://cake.deployeveryday.com:8080/job/cake)
+
 # Cake
 Cake is an application that crawls over [TechCrunch](https://techcrunch.com) posts, stores data about authors, articles and provides a web API to consume it.
 Why? This is a code challenge for [Cheesecake Labs](ckl.io). You know, needing a job :)
@@ -31,9 +33,20 @@ Here's a list of softwares, libraries and servicesused in this project:
 - PostgreSQL
 - psycopg2
 - Scrapy
+- Jenkins
 
 ### Architecture
 ![Architecture](img/architecture.png)
+
+An overview of the infrastructure:
+- All the requests go to **nginx**, which will server the `/static` files or proxy them to the **web** container.
+- The **web**, which runs Gunicorn and Django, will process the request. It consults the **db** for data.
+- **db** is a PostgreSQL server with persistent data on the host. It stores information about Authors and Articles.
+- Finally **scrap**, which runs Scrapy, gets data from TechCrunch and stores on **db**.
+
+Also, about the code deployment process:
+- When the code hits the **master** branch, GitHub automatically sends a hook to [Jenkins](http://cake.deployeveryday.com:8080).
+- Jenkins executes its build: gets the new code, executes the tests and docker-compose to bring the application up to date.
 
 ### Models Reference
 ![Models](img/models.png)
