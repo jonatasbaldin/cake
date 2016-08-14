@@ -50,6 +50,7 @@ class cake(CrawlSpider):
             item['author_twitter_page'] = response.css('[class="twitter-handle"] a::attr(href)').extract()[0]
         except:
             item['author_twitter_page'] = ''
+        item['article_title'] = response.css('[class="alpha tweet-title"]::text').extract()[0]
 
         # Create full author profile page
         authors_profile_page = response.css('[class="byline"] a::attr(href)').extract()[0]
@@ -58,7 +59,6 @@ class cake(CrawlSpider):
         # Get content from ld+json, nice to extract infomation
         content = json.loads(response.css('script[type="application/ld+json"]::text').extract()[1])
         item['article_content'] = self.sanitize_output(content['articleBody'])
-        item['article_title'] = content['headline']
         item['article_thumbnail_url'] = content['image']['@list']
         item['author_name'] = content['author']['name']
 
