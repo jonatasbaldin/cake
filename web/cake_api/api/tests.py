@@ -1,3 +1,4 @@
+import json
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.test import TestCase
@@ -40,6 +41,19 @@ class APIViewsArticle(APITestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(resp.data, data)
+
+
+class IndexView(APITestCase):
+
+    def test_index(self):
+        resp = self.client.get('/')
+        data = {'where_am_i': "You're at Cake! More information on https://github.com/jonatasbaldin/cake",
+                'author': "Jonatas Baldin",
+                'author_email': 'jonatas dot baldin at gmail dot com',
+                'author_twitter': 'https://twitter.com/vuashhhh'}
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp.content.decode(), json.dumps(data))
 
 
 class AuthorModelTest(TestCase):

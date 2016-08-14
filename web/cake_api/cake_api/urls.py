@@ -25,6 +25,7 @@ router.register(r'articles', views.ArticleViewSet)
 
 urlpatterns = [
     # Auto generated URLs from router
+    url(r'^$', views.index, name='index'),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
