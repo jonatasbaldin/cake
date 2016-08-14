@@ -126,9 +126,10 @@
     tags: migrate
 
   - name: Run first crawl
-    command: "sg docker -c \"docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000\""
+    command: "sg docker -c \"docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000 &> /home/{{ user }}/first_crawl.json\""
     args:
       chdir: "/home/{{ user }}/cake/"
+      creates: "/home/{{ user }}/first_crawl.json"
     become: no
     tags: crawl
 
