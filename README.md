@@ -73,7 +73,11 @@ Export your AWS credentials and configure your environment:
 export AWS_ACCESS_KEY_ID=<access_key>
 export AWS_SECRET_ACCESS_KEY=<secret_key>
 
+# Configure EC2 variables
 vim ansible_vars.yml
+
+# Configure APP_ALLOWED_HOSTS, the domain your instace will respond
+vim docker-compose-production.yml
 ```
 
 Run Ansible for the first time (no inventory):
@@ -85,5 +89,8 @@ The next time you run it, use the inventory file created:
 ```bash
 ansigle-playbook -i ansible_inventory ansible_deploy.yml
 ```
+
+Now, create an A DNS entry with the name specified in `APP_ALLOWED_HOSTS` poiting to your EC2 public IP.    
+You're ready to go! Consume the API at `http://yourdomain.com/api/v1/`.
 
 ### Thanks!

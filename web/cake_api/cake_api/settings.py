@@ -28,7 +28,7 @@ if os.environ['APP_ENV'] == 'development':
     ALLOWED_HOSTS = []
 elif os.environ['APP_ENV'] == 'production':
     DEBUG = False
-    ALLOWED_HOSTS = ['cake.deployeveryday.com']
+    ALLOWED_HOSTS = [os.environ['APP_ALLOWED_HOSTS']]
 
 
 # Application definition
@@ -87,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3',
+        'PASSWORD': os.environ['APP_DATABASE_PASSWORD'],
         'HOST': 'db',
         'PORT': '5432',
     }
@@ -131,4 +131,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/code/static/'
+STATIC_ROOT = os.environ['APP_STATIC_ROOT']

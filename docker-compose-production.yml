@@ -21,6 +21,9 @@ services:
       - db
     environment:
       APP_ENV: 'production'
+      APP_ALLOWED_HOSTS: 'cake.deployeveryday.com'
+      APP_DATABASE_PASSWORD: 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3'
+      APP_STATIC_ROOT: '/code/static/'
   nginx:
     restart: always
     build: ./nginx
@@ -35,3 +38,5 @@ services:
       - "./scrap/cake_scrap:/code"
     depends_on:
       - db
+    environment:
+      APP_DATABASE_PASSWORD: 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3'

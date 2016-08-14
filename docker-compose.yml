@@ -19,6 +19,8 @@ services:
       - db
     environment:
       APP_ENV: 'development'
+      APP_DATABASE_PASSWORD: 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3'
+      APP_STATIC_ROOT: '/code/static/'
   nginx:
     build: ./nginx
     command: nginx
@@ -32,3 +34,5 @@ services:
       - "./scrap/cake_scrap:/code"
     depends_on:
       - db
+    environment:
+      APP_DATABASE_PASSWORD: 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3'
