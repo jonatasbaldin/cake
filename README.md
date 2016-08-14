@@ -18,7 +18,14 @@ This is my first real project with Django and Djando REST Framework, so I had to
 - Improve production deployment. Here I'm experimenting with Ansible and EC2 on-the-fly, which may seen a bit raw now.
 
 ### API Endpoint
-The production API endpoint can be consumed at `cake.deployeveryday.com/api/v1/`.
+The production API endpoint can be consumed at `cake.deployeveryday.com/api/v1/`.   
+The way the API was built, also allows PUT, PATCH and DELETE. But there's code to validate these methods. Maybe tomorrow I'll code that! :D    
+
+Here are the GETs:
+- `/api/v1/authors/`: get all the authors paginated.
+- `/api/v1/authors/<id>`: get details on one author.
+- `/api/v1/articles/`: get all the articles paginated.
+- `/api/v1/articles/<id>`: get details on one article.
 
 ### Softwares used
 Here's a list of softwares, libraries and servicesused in this project:
@@ -30,6 +37,7 @@ Here's a list of softwares, libraries and servicesused in this project:
 - Django
 - Django REST Framework
 - Gunicorn
+- coverage
 - PostgreSQL
 - psycopg2
 - Scrapy
