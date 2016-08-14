@@ -11,6 +11,7 @@
   - name: Check if ansible_inventory exists (instance already up)
     stat: path=./ansible_inventory
     register: ansible_inventory
+    tags: ansible, production
 
   - block:
     - name: Launch instance
@@ -24,19 +25,23 @@
         assign_public_ip: yes
         wait: true
       register: ec2
+      tags: production, ec2
 
     - name: Create a inventory file, will be used in the next run!
       copy: content="cake ansible_host={{ item.public_ip }} ansible_ssh_private_key_file={{ key_file }} ansible_user={{ aws_user }}"
             dest=./ansible_inventory owner={{ your_user }} group={{ your_user }} mode=0755
       with_items: "{{ ec2.instances }}"
+      tags: ansible, production
 
     - name: Add new instance to host group
       add_host: hostname={{ item.public_ip }} groupname=cake ansible_ssh_private_key_file={{ key_file }} ansible_user={{ aws_user }}
       with_items: "{{ ec2.instances }}"
+      tags: production, ec2
 
     - name: Wait for SSH to come up
       wait_for: host={{ item.public_dns_name }} port=22 delay=60 timeout=320 state=started
       with_items: "{{ ec2.instances }}"
+      tags: production, ec2
     when: ansible_inventory.stat.exists == False
 
 - name: Configure instance
@@ -51,12 +56,15 @@
 
   - name: Install docker repo key
     apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D
+    tags: packages
 
   - name: Install docker repo
     apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main' state=present
+    tags: packages
 
   - name: Update apt repository
     apt: update_cache=yes cache_valid_time=3600
+    tags: packages
 
   - name: Install OS packages
     apt: name={{ item }} state=present
@@ -71,12 +79,15 @@
       - zlib1g-dev
       - libffi-dev
       - libssl-dev
+    tags: packages
 
   - name: Add user ubuntu to docker group
     user: name={{ user }} groups=docker append=yes
+    tags: user
 
   - name: Install docker-compose
     pip: name=docker-compose state=present
+    tags: packages
 
   - name: Clone cake repository
     git: repo=https://github.com/jonatasbaldin/cake.git dest="/home/{{ user }}/cake" ssh_opts="-o StrictHostKeyChecking=no"
@@ -85,6 +96,7 @@
 
   - name: Start docker
     service: name=docker state=started enabled=yes
+    tags: docker_service
 
   - name: Run docker-compose commands
     command: "{{ item }}"
@@ -104,15 +116,16 @@
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
-    tags: compose, migrate
+    tags: migrate
 
   - name: Run first crawl
     command: docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
-    tags: compose, crawl
+    tags: crawl
 
   - name: Install crawler cron job
     cron: name='They see me crawlin, they hatin' user={{ user }} minute="*/15" hour="*" 
           job='docker-compose -f docker-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=100' 
+    tags: cron
