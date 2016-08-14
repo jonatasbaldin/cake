@@ -107,3 +107,14 @@
       chdir: "/home/{{ user }}/cake/"
     become: no
     tags: compose
+
+  - name: Run first crawl
+    command: docker-compose run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000
+    args:
+      chdir: "/home/{{ user }}/cake/"
+    become: no
+    tags: compose
+
+  - name: Install crawler cron job
+    cron: name='They see me crawlin, they hatin' user={{ user }} minute="*/15" hour="*" 
+          job='docker-compose run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=100' 
