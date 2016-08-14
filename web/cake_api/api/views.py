@@ -13,5 +13,5 @@ class AuthorViewSet(viewsets.ModelViewSet):
 class ArticleViewSet(viewsets.ModelViewSet):
     """ Endpoint to consume Articler data
     """
-    queryset = Article.objects.all().order_by('id')
+    queryset = Article.objects.all().order_by('-published_date')
     serializer_class = ArticleSerializer
