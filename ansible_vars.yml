@@ -8,7 +8,7 @@ image_ami: ami-0fb83963 # Ubuntu 14.04
 # AWS instance user
 aws_user: ubuntu
 
-# Security group to use, needs SSH and HTTP allowed
+# Security group to use, needs SSH (Ansible), HTTP (NGINX), TCP 8080 (Jekins)
 security_group: sg_cake
 
 # Your subnet ID

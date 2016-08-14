@@ -62,6 +62,23 @@
     apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main' state=present
     tags: packages
 
+  # For Jenkins
+  - name: Install java repository
+    apt_repository: repo='ppa:webupd8team/java'
+    tags: jenkins
+
+  - name: Answer java question
+    debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+    tags: jenkins
+
+  - name: Trust jenkins key
+    apt_key: url='https://jenkins-ci.org/debian/jenkins-ci.org.key' state=present validate_certs=no
+    tags: jenkins
+
+  - name: Install jenkins repository
+    apt_repository: repo='deb http://pkg.jenkins-ci.org/debian-stable binary/' state=present
+    tags: jenkins
+
   - name: Update apt repository
     apt: update_cache=yes cache_valid_time=3600
     tags: packages
@@ -79,6 +96,8 @@
       - zlib1g-dev
       - libffi-dev
       - libssl-dev
+      - oracle-java8-installer
+      - jenkins
     tags: packages
 
   - name: Add user ubuntu to docker group
@@ -97,6 +116,10 @@
   - name: Start docker
     service: name=docker state=started enabled=yes
     tags: service, docker_service
+
+  - name: Start jenkins
+    service: name=jenkins state=started enabled=yes
+    tags: service, jenkins_service
 
   # All docker-compose runs with sg
   # The ubuntu user needs to log out and in again to be part of docker group
