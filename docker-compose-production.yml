@@ -1,6 +1,7 @@
 version: '2'
 services:
   db:
+    restart: always
     image: postgres
     ports:
       - "5432:5432"
@@ -9,6 +10,7 @@ services:
     environment:
       POSTGRES_PASSWORD: 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3'
   web:
+    restart: always
     build: ./web
     command: bash -c "sleep 5 && gunicorn cake_api.wsgi:application -w 2 -b :8000"
     volumes:
@@ -18,8 +20,9 @@ services:
     depends_on:
       - db
     environment:
-      APP_ENV: 'development'
+      APP_ENV: 'production'
   nginx:
+    restart: always
     build: ./nginx
     command: nginx
     ports:

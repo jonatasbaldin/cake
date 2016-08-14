@@ -23,9 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^-3-^z522s+q(q)p8)#g)ca#w89&py^o!g^0c_x*m-in3*&%po'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+if os.environ['APP_ENV'] == 'development':
+    DEBUG = True
+    ALLOWED_HOSTS = []
+elif os.environ['APP_ENV'] == 'production':
+    DEBUG = False
+    ALLOWED_HOSTS = ['cake.deployeveryday.com']
 
 
 # Application definition
@@ -84,6 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
+        'PASSWORD': 'I l1k3 us1nG p@assphrase @nd h@ck3r sTyl3',
         'HOST': 'db',
         'PORT': '5432',
     }
@@ -127,3 +131,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/code/static/'
