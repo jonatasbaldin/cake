@@ -96,7 +96,11 @@
 
   - name: Start docker
     service: name=docker state=started enabled=yes
-    tags: docker_service
+    tags: service, docker_service
+
+  - name: Reset SSH connections (new session, where user is in docker group)
+    service: name=ssh state=restarted enabled=yes
+    tags: service, ssh_service
 
   - name: Run docker-compose commands
     command: "{{ item }}"
@@ -106,6 +110,10 @@
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
+    tags: compose
+
+  - name: Race condition, again...
+    pause: seconds=10
     tags: compose
 
   - name: Run django migrate
