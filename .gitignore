@@ -1,5 +1,14 @@
+# Python trash
 __pycache__
 *.pyc
+
+# Postgres data
 db/pgdata/*
+
+# Ansible garbage and private inventory
 *.retry
 ansible_inventory
+
+# Coverage stuff
+web/cake_api/.coverage
+web/cake_api/htmlcov/

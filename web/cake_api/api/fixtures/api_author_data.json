@@ -1,0 +1,47 @@
+[
+{
+    "model": "api.author",
+    "pk": 1,
+    "fields": {
+        "name": "Darrell Etherington",
+        "profile_page": "https://techcrunch.com/author/darrell-etherington/",
+        "twitter_page": "https://twitter.com/etherington"
+    }
+},
+{
+    "model": "api.author",
+    "pk": 2,
+    "fields": {
+        "name": "Tim Merel",
+        "profile_page": "https://techcrunch.com/contributor/tim-merel/",
+        "twitter_page": "https://twitter.com/DigiCapitalist"
+    }
+},
+{
+    "model": "api.author",
+    "pk": 3,
+    "fields": {
+        "name": "Brian Heater",
+        "profile_page": "https://techcrunch.com/author/brian-heater/",
+        "twitter_page": "https://twitter.com/bheater"
+    }
+},
+{
+    "model": "api.author",
+    "pk": 4,
+    "fields": {
+        "name": "Lucia Maffei",
+        "profile_page": "https://techcrunch.com/author/lucia-maffei/",
+        "twitter_page": "https://twitter.com/maffei_lucia"
+    }
+},
+{
+    "model": "api.author",
+    "pk": 5,
+    "fields": {
+        "name": "Anthony Ha",
+        "profile_page": "https://techcrunch.com/author/anthony-ha/",
+        "twitter_page": "https://twitter.com/anthonyha"
+    }
+}
+]
