@@ -12,7 +12,7 @@ services:
   web:
     restart: always
     build: ./web
-    command: bash -c "sleep 5 && gunicorn cake_api.wsgi:application -w 2 -b :8000"
+    command: bash -c "sleep 10 && gunicorn cake_api.wsgi:application -w 2 -b :8000"
     volumes:
       - "./web/cake_api:/code"
     expose:

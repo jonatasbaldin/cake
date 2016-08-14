@@ -3,45 +3,41 @@
 - hosts: localhost
   become: no
   connection: local
-  vars:
-    region: sa-east-1
-    image_ami: ami-0fb83963 # Ubuntu 14.04
-    security_group: sg_cake
-    vpc_subnet_id: subnet-7ac9fb1f
-    instance_type: t2.micro
-    key_name: cake_key
-    key_file: cake_key.pem
+  vars_files:
+    - ansible_vars.yml
 
   tasks:
-  - name: Delete EC2 keypair
-    ec2_key: name={{ key_name }} state=absent region={{ region }}
 
-  - name: Create EC2 keypair
-    ec2_key: name={{ key_name }} state=present region={{ region }}
-    register: result
+  - name: Check if ansible_inventory exists (instance already up)
+    stat: path=./ansible_inventory
+    register: ansible_inventory
 
-  - name: Create local private key
-    copy: content={{ result.key.private_key }} dest={{ key_file }} owner=jonatas group=jonatas mode=0400
+  - block:
+    - name: Launch instance
+      ec2:
+        key_name: "{{ key_name }}"
+        group: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image_ami }}"
+        region: "{{ region }}"
+        vpc_subnet_id: "{{ vpc_subnet_id }}"
+        assign_public_ip: yes
+        wait: true
+      register: ec2
 
-  - name: Launch instance
-    ec2:
-      key_name: "{{ key_name }}"
-      group: "{{ security_group }}"
-      instance_type: "{{ instance_type }}"
-      image: "{{ image_ami }}"
-      region: "{{ region }}"
-      vpc_subnet_id: "{{ vpc_subnet_id }}"
-      assign_public_ip: yes
-      wait: true
-    register: ec2
+    - name: Create a inventory file, will be used in the next run!
+      copy: content="cake ansible_host={{ item.public_ip }} ansible_ssh_private_key_file={{ key_file }} ansible_user={{ aws_user }}"
+            dest=./ansible_inventory owner={{ your_user }} group={{ your_user }} mode=0755
+      with_items: "{{ ec2.instances }}"
 
-  - name: Add new instance to host group
-    add_host: hostname={{ item.public_ip }} groupname=cake ansible_ssh_private_key_file={{ key_file }} ansible_user=ubuntu
-    with_items: ec2.instances
+    - name: Add new instance to host group
+      add_host: hostname={{ item.public_ip }} groupname=cake ansible_ssh_private_key_file={{ key_file }} ansible_user={{ aws_user }}
+      with_items: "{{ ec2.instances }}"
 
-  - name: Wait for SSH to come up
-    wait_for: host={{ item.public_dns_name }} port=22 delay=60 timeout=320 state=started
-    with_items: ec2.instances
+    - name: Wait for SSH to come up
+      wait_for: host={{ item.public_dns_name }} port=22 delay=60 timeout=320 state=started
+      with_items: "{{ ec2.instances }}"
+    when: ansible_inventory.stat.exists == False
 
 - name: Configure instance
   hosts: cake
@@ -83,7 +79,9 @@
     pip: name=docker-compose state=present
 
   - name: Clone cake repository
-    git: repo=git@github.com:jonatasbaldin/cake.git dest="/home/{{ user }}/cake"
+    git: repo=https://github.com/jonatasbaldin/cake.git dest="/home/{{ user }}/cake" ssh_opts="-o StrictHostKeyChecking=no"
+    become: no
+    tags: github
 
   - name: Start docker
     service: name=docker state=started enabled=yes
@@ -92,7 +90,7 @@
     command: "{{ item }}"
     with_items:
       - docker-compose -f docker-compose-production.yml build
-      - docker-compose -f docker-compose-production.yml up
+      - docker-compose -f docker-compose-production.yml up -d
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
@@ -101,19 +99,19 @@
   - name: Run django migrate
     command: "{{ item }} "
     with_items:
-      - docker-compose run web python manage.py makemigrations
-      - docker-compose run web python manage.py migrate
+      - docker-compose -f docke-compose-production.yml run web python manage.py makemigrations
+      - docker-compose -f docke-compose-production.yml run web python manage.py migrate
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
-    tags: compose
+    tags: compose, migrate
 
   - name: Run first crawl
-    command: docker-compose run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000
+    command: docker-compose -f docke-compose-production.yml run scrap scrapy crawl cake --set CLOSESPIDER_PAGECOUNT=1000
     args:
       chdir: "/home/{{ user }}/cake/"
     become: no
-    tags: compose
+    tags: compose, crawl
 
   - name: Install crawler cron job
     cron: name='They see me crawlin, they hatin' user={{ user }} minute="*/15" hour="*" 

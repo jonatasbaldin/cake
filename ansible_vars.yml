@@ -1,0 +1,27 @@
+---
+# Region to deploy
+region: sa-east-1
+
+# Image AMI (only tested on Ubuntu 14.04)
+image_ami: ami-0fb83963 # Ubuntu 14.04
+
+# AWS instance user
+aws_user: ubuntu
+
+# Security group to use, needs SSH and HTTP allowed
+security_group: sg_cake
+
+# Your subnet ID
+vpc_subnet_id: subnet-7ac9fb1f
+
+# Instance size (minimum 1Gb)
+instance_type: t2.micro
+
+# Key name in AWS to be used
+key_name: cake_key
+
+# Path to key file correspondent to the key_name
+key_file: cake_key.pem
+
+# Gets your user :)
+your_user: "{{ lookup('env', 'USER') }}"
