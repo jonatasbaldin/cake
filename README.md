@@ -4,7 +4,7 @@
 
 # Cake
 Cake is an application that crawls over [TechCrunch](https://techcrunch.com) posts, stores data about authors, articles and provides a web API to consume it.
-Why? This is a code challenge for [Cheesecake Labs](ckl.io). You know, needing a job :)
+Why? This is a code challenge for [Cheesecake Labs](https://ckl.io). You know, needing a job :)
 
 ### Considerations
 This is my first real project with Django and Djando REST Framework, so I had to study a lot and create this Cake in the last days. I tried to follow the recommendations and best practices available on the Internet and the documentations. With that in mind, here are some considerations:
@@ -68,10 +68,12 @@ git clone https://github.com/jonatasbaldin/cake.git
 cd cake
 ```
 
-Run docker-compose:
+Run docker-compose to build and migrate Django models:
 ```bash
 docker-compose build
 docker-compose up -d
+docker-compose run web python manage.py makemigrations
+docker-compose run web python manage.py migrate
 ```
 
 Run the crawler (here with 100 requests limit):
