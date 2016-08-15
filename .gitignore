@@ -12,3 +12,6 @@ ansible_inventory
 # Coverage stuff
 web/cake_api/.coverage
 web/cake_api/htmlcov/
+
+# NGINX logs
+nginx/logs

@@ -28,6 +28,8 @@ services:
       - "80:80"
     volumes_from:
       - web
+    volumes:
+      - "./nginx/logs:/var/log/nginx"
   scrap:
     build: ./scrap
     volumes:
