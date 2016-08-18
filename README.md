@@ -1,10 +1,10 @@
 ![Cheesecake](img/logo.png)
 
-[![Build Status](http://cake.deployeveryday.com:8080/buildStatus/icon?job=cake)](http://cake.deployeveryday.com:8080/job/cake)
-
 # Cake
 Cake is an application that crawls over [TechCrunch](https://techcrunch.com) posts, stores data about authors, articles and provides a web API to consume it.
 Why? This is a code challenge for [Cheesecake Labs](https://ckl.io). You know, needing a job :)
+
+**The online version is not running anymore, delpoy your own :)**
 
 ### Considerations
 This is my first real project with Django and Djando REST Framework, so I had to study a lot and create this Cake in the last days. I tried to follow the recommendations and best practices available on the Internet and the documentations. With that in mind, here are some considerations:
